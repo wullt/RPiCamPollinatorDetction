@@ -1,0 +1,54 @@
+
+models:
+  flower:
+    weights_path: models/flowers_ds_v5_640_yolov5n_v0_cnv-fp16.tflite
+    classes:
+      - 'daisy'
+      - 'wildemoere'
+      - 'flockenblume'
+    image_size: 640
+    confidence_threshold:  0.2
+    iou_threshold: 0.5
+    margin: 20
+  pollinator:
+    weights_path: models/pollinators_ds_v6_480_yolov5s_bs32_300ep_multiscale_v0-fp16.tflite
+    classes: ["honigbiene", "wildbiene","hummel","schwebfliege","fliege"]
+    image_size: 480
+    confidence_threshold:  0.2
+    iou_threshold: 0.5
+    margin: 20
+
+input:
+  # type can be url or camera
+  type: url
+  server:
+    url: http://localhost:8080/?action=snapshot
+    username: MY_USER
+    password: MY_PASSWORD
+  # for type: camera
+  camera:
+    width: 4656
+    height: 3496
+
+
+output:
+  ignore_empty_results: false
+
+  http:
+    transmit_http: true
+    url: https://results.example.com/api/v1/results
+    method: POST
+    username: username
+    password: password
+
+  mqtt:
+    transmit_mqtt: false
+    host: mqtt.example.com
+    port: 8883
+    username: mqtt_user
+    password: mqtt_password
+    topic: "results/${hostname}/json"
+    use_tls: true
+
+
+capture_interval: -1
