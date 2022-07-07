@@ -5,6 +5,7 @@ import numpy as np
 from utils import letterbox_image, scale_coords
 from PIL import Image
 import time
+import logging
 
 
 class YoloModel:
@@ -150,7 +151,6 @@ class YoloModel:
         return result_boxes, result_scores, result_class_names
 
     def _predict(self, image):
-        t0 = time.time()
 
         original_size = image.shape[:2]
         input_data = np.ndarray(
@@ -177,11 +177,11 @@ class YoloModel:
         pred[..., 3] *= original_size[0]  # h
 
         result_boxes, result_scores, result_class_names = self.nms(pred)
-        self.total_inference_time += time.time() - t0
-        self.number_of_inferences += 1
+
         return result_boxes, result_scores, result_class_names
 
     def detect(self, image):
+
         if type(image) == str:
             image = Image.open(image)
         image_size_orig = image.size
@@ -198,9 +198,12 @@ class YoloModel:
                 np.array(result_boxes),
                 (image_size_orig[1], image_size_orig[0]),
             )
+
         return result_boxes, result_scores, result_class_names
 
     def get_crops(self, image):
+        t0 = time.time()
+
         if type(image) == str:
             image = Image.open(image)
         result_boxes, result_scores, result_class_names = self.detect(image)
@@ -221,5 +224,6 @@ class YoloModel:
                 xmax = image.size[0]
             crop = image.crop((xmin, ymin, xmax, ymax))
             crops.append(crop)
-
+        self.total_inference_time += time.time() - t0
+        self.number_of_inferences += 1
         return crops, result_class_names, result_scores
