@@ -181,7 +181,7 @@ class YoloModel:
         return result_boxes, result_scores, result_class_names
 
     def detect(self, image):
-
+        t0 = time.time()
         if type(image) == str:
             image = Image.open(image)
         image_size_orig = image.size
@@ -189,15 +189,20 @@ class YoloModel:
         image_lb = letterbox_image(image, model_size)
         image_array = np.asarray(image_lb)
         image_array_norm = image_array.astype(np.float32) / 255.0
+        t1 = time.time()
         result_boxes, result_scores, result_class_names = self._predict(
             image_array_norm
         )
+        t2 = time.time()
         if len(result_boxes) > 0:
             result_boxes = scale_coords(
                 model_size,
                 np.array(result_boxes),
                 (image_size_orig[1], image_size_orig[0]),
             )
+        t3 = time.time()
+        logging.info("Preprocessing: {} Detecting: {} Postprocessing: {}".format(
+            round(t1 - t0, 5), round(t2 - t1, 5), round(t3 - t2, 5)))
 
         return result_boxes, result_scores, result_class_names
 
