@@ -9,6 +9,8 @@ import base64
 import datetime
 import logging
 
+RESIZE_RESAMPLE = Image.BILINEAR
+
 
 def download_image(url, username=None, password=None):
     auth = None
@@ -65,7 +67,7 @@ def letterbox_image(image, size):
     nw = int(iw * scale)
     nh = int(ih * scale)
 
-    image = image.resize((nw, nh), Image.BICUBIC)
+    image = image.resize((nw, nh), RESIZE_RESAMPLE)
     new_image = Image.new("RGB", size, (128, 128, 128))
     new_image.paste(image, ((w - nw) // 2, (h - nh) // 2))
     return new_image
