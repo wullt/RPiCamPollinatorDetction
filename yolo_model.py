@@ -204,8 +204,8 @@ class YoloModel:
                 (image_size_orig[1], image_size_orig[0]),
             )
         t6 = time.time()
-        logging.info("Open Image : {} letterbox: {} array: {} norm: {} predict: {} scale: {}".format(
-            t1 - t0, t2 - t1, t3 - t2, t4 - t3, t5 - t4, t6 - t5))
+        #logging.info("Open Image : {} letterbox: {} array: {} norm: {} predict: {} scale: {}".format(
+        #    t1 - t0, t2 - t1, t3 - t2, t4 - t3, t5 - t4, t6 - t5))
 
         return result_boxes, result_scores, result_class_names
 
