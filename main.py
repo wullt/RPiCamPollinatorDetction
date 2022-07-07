@@ -184,20 +184,16 @@ while True:
     crops, result_class_names, result_scores = model_1.get_crops(image)
     t2 = time.time()
     logging.info("processing step 1 image {} took {}".format(i, t2 - t1))
-    print("result_class_names", result_class_names)
+    logging.info("result_class_names: {}".format(result_class_names))
     nr_flowers = len(result_class_names)
     t2 = time.time()
-    pollinator_index = 0
     for i in tqdm(range(nr_flowers)):
         crop_width, crop_height = crops[i].size
         msg.add_flower(
             result_class_names[i], result_scores[i], crops[i]
         )
 
-            # print(result_class_names[i], result_class_names2[j], result_scores2[j])
-    logging.info(
-        "Found {} pollinators on {} flowers".format(pollinator_index, nr_flowers)
-    )
+
     t3 = time.time()
     logging.info("processing step 2 image {} took {}".format(i, t3 - t2))
     logging.info(
