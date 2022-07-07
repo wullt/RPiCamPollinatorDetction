@@ -29,16 +29,18 @@ class Message:
         self.metadata = {}
         self.node_id = node_id
 
-    def add_flower(self, index, class_name, score, width, height):
-        self.flowers.append(
-            {
-                "index": index,
+    def add_flower(self, class_name, score, crop):
+
+        flower={
                 "class_name": class_name,
                 "score": float(score),
-                "width": width,
-                "height": height,
+                "crop": None,
             }
-        )
+        if crop is not None:
+            bio = BytesIO()
+            crop.save(bio, format="JPEG")
+            flower["crop"] = base64.b64encode(bio.getvalue()).decode("utf-8")
+        self.flowers.append(flower)
 
     def add_pollinator(
         self, index, flower_index, class_name, score, width, height, crop=None
@@ -57,17 +59,17 @@ class Message:
             pollinator["crop"] = base64.b64encode(bio.getvalue()).decode("utf-8")
         self.pollinators.append(pollinator)
 
-    def add_metadata(self, flowermeta, pollimeta, input_image_size):
+    def add_metadata(self, flowermeta,  input_image_size, download_time):
         self.metadata["flower_inference"] = flowermeta
         self.metadata["flower_inference"]["capture_size"] = input_image_size
-        self.metadata["pollinator_inference"] = pollimeta
+        self.metadata["flower_inference"]["time_download"] = download_time
 
     def construct_message(self):
+        self.metadata["flower_inference"]["node_id"] = self.node_id
+        self.metadata["flower_inference"]["capture_time"] = str(self.timestamp)
         message = {
-            "flowers": self.flowers,
-            "pollinators": self.pollinators,
-            "timestamp": str(self.timestamp),
-            "node_id": self.node_id,
+            "detections": self.flowers,
+            
             "metadata": self.metadata,
         }
         return message

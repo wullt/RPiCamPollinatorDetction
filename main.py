@@ -53,14 +53,6 @@ MODEL_1_CONFIDENCE_THRESHOLD = model_1_config.get("confidence_threshold")
 MODEL_1_IOU_THRESHOLD = model_1_config.get("iou_threshold")
 MODEL_1_MARGIN = model_1_config.get("margin")
 
-model_2_config = cfg.get("models").get("pollinator")
-MODEL_2_WEIGHTS = model_2_config.get("weights_path")
-MODEL_2_CLASSES = model_2_config.get("classes")
-MODEL_2_IMG_SIZE = model_2_config.get("image_size")
-MODEL_2_CONFIDENCE_THRESHOLD = model_2_config.get("confidence_threshold")
-MODEL_2_IOU_THRESHOLD = model_2_config.get("iou_threshold")
-MODEL_2_MARGIN = model_2_config.get("margin")
-
 
 input_config = cfg.get("input")
 INPUT_TYPE = input_config.get("type", "url")
@@ -173,14 +165,7 @@ model_1 = YoloModel(
     classes=MODEL_1_CLASSES,
     margin=MODEL_1_MARGIN,
 )
-model_2 = YoloModel(
-    MODEL_2_WEIGHTS,
-    MODEL_2_IMG_SIZE,
-    MODEL_2_CONFIDENCE_THRESHOLD,
-    MODEL_2_IOU_THRESHOLD,
-    classes=MODEL_2_CLASSES,
-    margin=MODEL_2_MARGIN,
-)
+
 
 
 i = 0
@@ -194,7 +179,6 @@ while True:
     t1 = time.time()
     logging.info("Getting image {} took {}".format(i, t1 - t0))
     model_1.reset_inference_times()
-    model_2.reset_inference_times()
     msg = Message(download_time, HOSTNAME)
     crops, result_class_names, result_scores = model_1.get_crops(image)
     t2 = time.time()
@@ -209,20 +193,6 @@ while True:
             i, result_class_names[i], result_scores[i], crop_width, crop_height
         )
 
-        crops2, result_class_names2, result_scores2 = model_2.get_crops(crops[i])
-        for j in range(len(result_class_names2)):
-            crop2_width, crop2_height = crops2[j].size
-
-            msg.add_pollinator(
-                pollinator_index,
-                i,
-                result_class_names2[j],
-                result_scores2[j],
-                crop2_width,
-                crop2_height,
-                crops2[j],
-            )
-            pollinator_index += 1
             # print(result_class_names[i], result_class_names2[j], result_scores2[j])
     logging.info(
         "Found {} pollinators on {} flowers".format(pollinator_index, nr_flowers)
@@ -233,7 +203,7 @@ while True:
         "Average processing time polli {}: {}".format(i, (t3 - t2) / max(len(crops), 1))
     )
 
-    msg.add_metadata(model_1.get_metadata(), model_2.get_metadata(), [orig_width, orig_height])
+    msg.add_metadata(model_1.get_metadata(multiple_inferences=False), [orig_width, orig_height])
     hclient.send_message(msg.construct_message())
 
     logging.info("TOTAL TIME: {}".format(t3 - t0))

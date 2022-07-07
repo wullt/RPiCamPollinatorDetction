@@ -10,13 +10,7 @@ models:
     confidence_threshold:  0.2
     iou_threshold: 0.5
     margin: 20
-  pollinator:
-    weights_path: models/pollinators_ds_v6_480_yolov5s_bs32_300ep_multiscale_v0-fp16.tflite
-    classes: ["honigbiene", "wildbiene","hummel","schwebfliege","fliege"]
-    image_size: 480
-    confidence_threshold:  0.2
-    iou_threshold: 0.5
-    margin: 20
+
 
 input:
   # type can be url or camera

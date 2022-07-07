@@ -32,7 +32,7 @@ class YoloModel:
         self.total_inference_time = 0
         self.number_of_inferences = 0
 
-    def get_metadata(self):
+    def get_metadata(self, multiple_inferences=False):
         metadata = {}
         metadata["confidence_threshold"] = self.conf_thres
         metadata["iou_threshold"] = self.iou_thres
@@ -40,8 +40,11 @@ class YoloModel:
         metadata["model_name"] = self.weights.split("/")[-1]
         metadata["max_det"] = 25  # max number of detections per image (tflite only)
         total_inference_time, average_inference_time = self.get_inference_times()
-        metadata["total_inference_time"] = total_inference_time
-        metadata["average_inference_time"] = average_inference_time
+        if multiple_inferences:
+            metadata["total_inference_time"] = total_inference_time
+            metadata["average_inference_time"] = average_inference_time
+        else:
+            metadata["total_inference_time"] = total_inference_time
         return metadata
 
     def reset_inference_times(self):
