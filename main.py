@@ -236,11 +236,11 @@ while True:
     )
 
     msg.add_metadata(
-        flowermeta=model_1.get_metadata(),
-        pollinatormeta=model_2.get_metadata(),
-        input_image_size=[orig_width, orig_height],
-        capture_duration=capture_duration,
-        download_duration=capture_duration,
+        model_1.get_metadata(),
+        model_2.get_metadata(),
+        [orig_width, orig_height],
+        capture_duration,
+        INPUT_TYPE
     )
     message = msg.construct_message()
     if TRANSMIT_HTTP:
