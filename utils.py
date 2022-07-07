@@ -9,7 +9,7 @@ import base64
 import datetime
 import logging
 
-RESIZE_RESAMPLE = Image.BILINEAR
+RESIZE_RESAMPLE = Image.BOX
 
 
 def download_image(url, username=None, password=None):
