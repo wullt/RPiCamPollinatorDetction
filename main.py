@@ -235,12 +235,19 @@ while True:
         "Average processing time polli {}: {}".format(i, (t3 - t2) / max(len(crops), 1))
     )
 
-    msg.add_metadata(model_1.get_metadata(), model_2.get_metadata(), [orig_width, orig_height], capture_duration)
+    msg.add_metadata(
+        flowermeta=model_1.get_metadata(),
+        pollinatormeta=model_2.get_metadata(),
+        input_image_size=[orig_width, orig_height],
+        capture_duration=capture_duration,
+        download_duration=capture_duration,
+    )
+    message = msg.construct_message()
     if TRANSMIT_HTTP:
-        hclient.send_message(msg.construct_message())
+        hclient.send_message(message=message)
 
     if TRANSMIT_MQTT:
-        mclient.publish(msg.construct_message())
+        mclient.publish(message)
 
     logging.info("TOTAL TIME: {}".format(t3 - t0))
     logging.info("Collecting")

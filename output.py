@@ -20,6 +20,8 @@ handler.setFormatter(
 )
 log.addHandler(handler)
 
+DECIMALS_TO_ROUND = 3
+
 
 class Message:
     def __init__(self, ts, node_id):
@@ -40,16 +42,12 @@ class Message:
             }
         )
 
-    def add_pollinator(
-        self, index, flower_index, class_name, score, width, height, crop=None
-    ):
+    def add_pollinator(self, index, flower_index, class_name, score, crop=None):
         pollinator = {
             "index": index,
             "flower_index": flower_index,
             "class_name": class_name,
             "score": float(score),
-            "width": width,
-            "height": height,
         }
         if crop is not None:
             bio = BytesIO()
@@ -57,10 +55,16 @@ class Message:
             pollinator["crop"] = base64.b64encode(bio.getvalue()).decode("utf-8")
         self.pollinators.append(pollinator)
 
-    def add_metadata(self, flowermeta, pollimeta, input_image_size, download_time):
+    def add_metadata(self, flowermeta, pollimeta, input_image_size, capture_duration, img_source):
+        self.metadata["node_id"] = self.node_id
+        self.metadata["capture_timestamp"] = str(self.timestamp)
+        self.metadata["original_image"] = {
+            "size": input_image_size,
+            "capture_duration": round(capture_duration, DECIMALS_TO_ROUND),
+            "source": img_source,
+        }
+
         self.metadata["flower_inference"] = flowermeta
-        self.metadata["flower_inference"]["capture_size"] = input_image_size
-        self.metadata["flower_inference"]["time_download"] = download_time
         self.metadata["pollinator_inference"] = pollimeta
 
     def construct_message(self):
@@ -150,7 +154,7 @@ class HTTPClient:
             ).decode("utf-8")
         try:
             response = requests.request(
-                self.method, url, headers=headers, data=json.dumps(message) , timeout=10
+                self.method, url, headers=headers, data=json.dumps(message), timeout=10
             )
             if response.status_code == 200:
                 log.info("Successfully sent results to {}".format(url))
