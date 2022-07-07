@@ -41,9 +41,10 @@ class YoloModel:
         metadata["model_name"] = self.weights.split("/")[-1]
         metadata["max_det"] = self.max_detections
         total_inference_time, average_inference_time = self.get_inference_times()
-        metadata["inference_times"] = [round(total_inference_time, 3)]
-        if self.number_of_inferences >1:
-            metadata["inference_times"].append(round(average_inference_time, 3))
+        if total_inference_time is not None:
+            metadata["inference_times"] = [round(total_inference_time, 3)]
+            if self.number_of_inferences >1:
+                metadata["inference_times"].append(round(average_inference_time, 3))
         return metadata
 
     def reset_inference_times(self):
