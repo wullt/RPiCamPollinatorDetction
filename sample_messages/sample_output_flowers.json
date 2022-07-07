@@ -1,0 +1,38 @@
+{
+    "metadata": {
+        "node_id": "3200-5030",
+        "capture_timestamp": "2022-07-07 08:48:18.108219",
+        "original_image": {
+            "size": [
+                4656,
+                3496
+            ],
+            "capture_duration": 0.854,
+            "source": "camera"
+        },
+        "flower_inference": {
+            "confidence_threshold": 0.2,
+            "iou_threshold": 0.5,
+            "margin": 20,
+            "model_name": "flowers_ds_v5_640_yolov5n_v0_cnv-fp16.tflite",
+            "max_det": 25,
+            "inference_times": [
+                1.624
+            ]
+        }
+    },
+    "detections": {
+        "flowers": [
+            {
+                "class_name": "flockenblume",
+                "score": 0.957,
+                "crop": "/9j/4AAQSkZJRgA... ...BAQAAAQABAAD/2wBDAAgGBgcG"
+            },
+            {
+                "class_name": "daisy",
+                "score": 0.741,
+                "crop": "/9j/4AAQSkZJRgABAQA... ...AAQABAAD/2wBDA"
+            }
+        ]
+    }
+}
