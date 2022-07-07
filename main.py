@@ -214,14 +214,12 @@ while True:
         crops2, result_class_names2, result_scores2 = model_2.get_crops(crops[i])
         for j in range(len(result_class_names2)):
             crop2_width, crop2_height = crops2[j].size
-
+            # index, flower_index, class_name, score, crop=None
             msg.add_pollinator(
                 pollinator_index,
                 i,
                 result_class_names2[j],
                 result_scores2[j],
-                crop2_width,
-                crop2_height,
                 crops2[j],
             )
             pollinator_index += 1
