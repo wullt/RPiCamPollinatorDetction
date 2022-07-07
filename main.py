@@ -201,7 +201,11 @@ while True:
     )
 
     msg.add_metadata(model_1.get_metadata(multiple_inferences=False), [orig_width, orig_height], capture_duration)
-    hclient.send_message(msg.construct_message())
+    if TRANSMIT_HTTP:
+        hclient.send_message(msg.construct_message())
+
+    if TRANSMIT_MQTT:
+        mclient.publish(msg.construct_message())
 
     logging.info("TOTAL TIME: {}".format(t3 - t0))
     logging.info("Collecting")
