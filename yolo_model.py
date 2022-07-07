@@ -186,23 +186,26 @@ class YoloModel:
             image = Image.open(image)
         image_size_orig = image.size
         model_size = (self.image_size, self.image_size)
-        image_lb = letterbox_image(image, model_size)
-        image_array = np.asarray(image_lb)
-        image_array_norm = image_array.astype(np.float32) / 255.0
         t1 = time.time()
+        image_lb = letterbox_image(image, model_size)
+        t2 = time.time()
+        image_array = np.asarray(image_lb)
+        t3 = time.time()
+        image_array_norm = image_array.astype(np.float32) / 255.0
+        t4 = time.time()
         result_boxes, result_scores, result_class_names = self._predict(
             image_array_norm
         )
-        t2 = time.time()
+        t5 = time.time()
         if len(result_boxes) > 0:
             result_boxes = scale_coords(
                 model_size,
                 np.array(result_boxes),
                 (image_size_orig[1], image_size_orig[0]),
             )
-        t3 = time.time()
-        logging.info("Preprocessing: {} Detecting: {} Postprocessing: {}".format(
-            round(t1 - t0, 5), round(t2 - t1, 5), round(t3 - t2, 5)))
+        t6 = time.time()
+        logging.debug("Open Image : {} letterbox: {} array: {} norm: {} predict: {} scale: {}".format(
+            t1 - t0, t2 - t1, t3 - t2, t4 - t3, t5 - t4, t6 - t5))
 
         return result_boxes, result_scores, result_class_names
 
