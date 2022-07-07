@@ -200,7 +200,7 @@ while True:
     )
     # flowermeta,  input_image_size,  capture_duration, img_source
     msg.add_metadata(
-        model_1.get_metadata(multiple_inferences=False),
+        model_1.get_metadata(),
         [orig_width, orig_height],
         capture_duration,
         INPUT_TYPE,

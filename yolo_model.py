@@ -33,7 +33,7 @@ class YoloModel:
         self.total_inference_time = 0
         self.number_of_inferences = 0
 
-    def get_metadata(self, multiple_inferences=False):
+    def get_metadata(self):
         metadata = {}
 
         metadata["confidence_threshold"] = self.conf_thres
@@ -42,6 +42,8 @@ class YoloModel:
         metadata["model_name"] = self.weights.split("/")[-1]
         metadata["max_det"] = self.max_detections
         total_inference_time, average_inference_time = self.get_inference_times()
+        print("total inference time: ", total_inference_time)
+        print("average inference time: ", average_inference_time)
         if total_inference_time is not None:
             metadata["inference_times"] = [round(total_inference_time, 3)]
             if self.number_of_inferences > 1:
