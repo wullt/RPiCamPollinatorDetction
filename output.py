@@ -151,7 +151,7 @@ class HTTPClient:
             ).decode("utf-8")
         try:
             response = requests.request(
-                self.method, url, headers=headers, data=json.dumps(message)
+                self.method, url, headers=headers, data=json.dumps(message), timeout=10
             )
             if response.status_code == 200:
                 log.info("Successfully sent results to {}".format(url))
