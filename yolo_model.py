@@ -151,7 +151,7 @@ class YoloModel:
         return result_boxes, result_scores, result_class_names
 
     def _predict(self, image):
-
+        t00 = time.time()
         original_size = image.shape[:2]
         input_data = np.ndarray(
             shape=(1, self.image_size, self.image_size, 3), dtype=np.float32
@@ -165,18 +165,27 @@ class YoloModel:
         # Get input and output tensors
         # input_details = self.interpreter.get_input_details()
         # output_details = self.interpreter.get_output_details()
-
+        t0 = time.time()
         self.interpreter.set_tensor(self.input_details[0]["index"], input_data)
+        t1 = time.time()
         self.interpreter.invoke()
+        t2 = time.time()
         pred = self.interpreter.get_tensor(self.output_details[0]["index"])
+        t3 = time.time()
 
         # Denormalize xywh
         pred[..., 0] *= original_size[1]  # x
         pred[..., 1] *= original_size[0]  # y
         pred[..., 2] *= original_size[1]  # w
         pred[..., 3] *= original_size[0]  # h
+        
+        t4 = time.time()
 
         result_boxes, result_scores, result_class_names = self.nms(pred)
+        t5 = time.time()
+        logging.info("input_data: {} set_tensor: {} invoke: {} get_tensor: {} denorm: {} nms: {}".format(
+           t0-t00, t1 - t0, t2 - t1, t3 - t2, t4 - t3, t5 - t4
+        ))
 
         return result_boxes, result_scores, result_class_names
 
