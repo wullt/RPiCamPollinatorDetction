@@ -191,7 +191,7 @@ while True:
     for i in tqdm(range(nr_flowers)):
         crop_width, crop_height = crops[i].size
         msg.add_flower(
-            i, result_class_names[i], result_scores[i], crop_width, crop_height
+            result_class_names[i], result_scores[i], crops[i]
         )
 
             # print(result_class_names[i], result_class_names2[j], result_scores2[j])
