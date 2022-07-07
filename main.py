@@ -175,6 +175,9 @@ while True:
     t0 = time.time()
     image = capture_image()
     t1 = time.time()
+    # save image
+    time_str = download_time.strftime("%Y-%m-%d_%H-%M-%S")
+    image.save("/home/pi/images/{}.jpg".format(time_str))
     capture_duration = t1 - t0
     orig_width, orig_height = image.size
     logging.info("Getting image {} took {}".format(i, capture_duration))
