@@ -190,6 +190,7 @@ while True:
     t0 = time.time()
     download_time = datetime.datetime.utcnow()
     image = capture_image()
+    orig_width, orig_height = image.size
     t1 = time.time()
     logging.info("Getting image {} took {}".format(i, t1 - t0))
     model_1.reset_inference_times()
@@ -232,7 +233,7 @@ while True:
         "Average processing time polli {}: {}".format(i, (t3 - t2) / max(len(crops), 1))
     )
 
-    msg.add_metadata(model_1.get_metadata(), model_2.get_metadata())
+    msg.add_metadata(model_1.get_metadata(), model_2.get_metadata(), [orig_width, orig_height])
     hclient.send_message(msg.construct_message())
 
     logging.info("TOTAL TIME: {}".format(t3 - t0))
