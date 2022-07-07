@@ -1,0 +1,73 @@
+{
+    "metadata": {
+        "node_id": "3200-5030",
+        "capture_timestamp": "2022-07-07 08:48:18.108219",
+        "original_image": {
+            "size": [
+                4656,
+                3496
+            ],
+            "capture_duration": 0.854,
+            "source": "camera"
+        },
+        "flower_inference": {
+            "confidence_threshold": 0.2,
+            "iou_threshold": 0.5,
+            "margin": 20,
+            "model_name": "flowers_ds_v5_640_yolov5n_v0_cnv-fp16.tflite",
+            "max_det": 25,
+            "inference_times": [
+                1.624
+            ]
+        },
+        "pollinator_inference": {
+            "confidence_threshold": 0.25,
+            "iou_threshold": 0.55,
+            "margin": 20,
+            "model_name": "pollinators_ds_v6_480_yolov5s_bs32_300ep_multiscale_v0-fp16.tflite",
+            "max_det": 25,
+            "inference_times": [
+                20.357,
+                2.261
+            ]
+        }
+    },
+    "detections": {
+        "flowers": [
+            {
+                "index": 0,
+                "class_name": "flockenblume",
+                "score": 0.957,
+                "size": [
+                    416,
+                    450
+                ]
+            },
+            {
+                "index": 1,
+                "class_name": "flockenblume",
+                "score": 0.227,
+                "size": [
+                    340,
+                    697
+                ]
+            }
+        ],
+        "pollinators": [
+            {
+                "index": 0,
+                "flower_index": 1,
+                "class_name": "honigbiene",
+                "score": 0.965,
+                "crop": "/9j/4AAQS....kZJRgABA"
+            },
+            {
+                "index": 1,
+                "flower_index": 4,
+                "class_name": "hummel",
+                "score": 0.721,
+                "crop": "/9j/4AA....QSkZJR"
+            }
+        ]
+    }
+}
