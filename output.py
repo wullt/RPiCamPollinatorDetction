@@ -55,7 +55,9 @@ class Message:
             pollinator["crop"] = base64.b64encode(bio.getvalue()).decode("utf-8")
         self.pollinators.append(pollinator)
 
-    def add_metadata(self, flowermeta, pollimeta, input_image_size, capture_duration, img_source):
+    def add_metadata(
+        self, flowermeta, pollimeta, input_image_size, capture_duration, img_source
+    ):
         self.metadata["node_id"] = self.node_id
         self.metadata["capture_timestamp"] = str(self.timestamp)
         self.metadata["original_image"] = {
@@ -69,10 +71,10 @@ class Message:
 
     def construct_message(self):
         message = {
-            "flowers": self.flowers,
-            "pollinators": self.pollinators,
-            "timestamp": str(self.timestamp),
-            "node_id": self.node_id,
+            "detections": {
+                "flowers": self.flowers,
+                "pollinators": self.pollinators,
+            },
             "metadata": self.metadata,
         }
         return message
