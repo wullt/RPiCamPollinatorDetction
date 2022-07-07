@@ -183,21 +183,20 @@ while True:
     logging.info("Getting image {} took {}".format(i, capture_duration))
     model_1.reset_inference_times()
     msg = Message(download_time, HOSTNAME)
-    crops, result_class_names, result_scores = model_1.get_crops(image)
     t2 = time.time()
-    logging.info("processing step 1 image {} took {}".format(i, t2 - t1))
+    crops, result_class_names, result_scores = model_1.get_crops(image)
+    t3 = time.time()
+    logging.info("Flower inference on image {} took {}".format(i, t3 - t2))
     logging.info("result_class_names: {}".format(result_class_names))
     nr_flowers = len(result_class_names)
-    t2 = time.time()
+    t4 = time.time()
     for i in tqdm(range(nr_flowers)):
         crop_width, crop_height = crops[i].size
         msg.add_flower(result_class_names[i], result_scores[i], crops[i])
 
-    t3 = time.time()
-    logging.info("processing step 2 image {} took {}".format(i, t3 - t2))
-    logging.info(
-        "Average processing time polli {}: {}".format(i, (t3 - t2) / max(len(crops), 1))
-    )
+    t5 = time.time()
+    logging.info("Adding flowers to message took {}".format(t5 - t4))
+
     # flowermeta,  input_image_size,  capture_duration, img_source
     msg.add_metadata(
         model_1.get_metadata(),
@@ -212,7 +211,7 @@ while True:
     if TRANSMIT_MQTT:
         mclient.publish(message)
 
-    logging.info("TOTAL TIME: {}".format(t3 - t0))
+    logging.info("TOTAL TIME: {}".format(time.time() - t0))
     logging.info("Collecting")
     gc.collect()
     i += 1
