@@ -167,7 +167,6 @@ model_1 = YoloModel(
 )
 
 
-
 i = 0
 while True:
 
@@ -189,23 +188,26 @@ while True:
     t2 = time.time()
     for i in tqdm(range(nr_flowers)):
         crop_width, crop_height = crops[i].size
-        msg.add_flower(
-            result_class_names[i], result_scores[i], crops[i]
-        )
-
+        msg.add_flower(result_class_names[i], result_scores[i], crops[i])
 
     t3 = time.time()
     logging.info("processing step 2 image {} took {}".format(i, t3 - t2))
     logging.info(
         "Average processing time polli {}: {}".format(i, (t3 - t2) / max(len(crops), 1))
     )
-
-    msg.add_metadata(model_1.get_metadata(multiple_inferences=False), [orig_width, orig_height], capture_duration)
+    # flowermeta,  input_image_size,  capture_duration, img_source
+    msg.add_metadata(
+        model_1.get_metadata(multiple_inferences=False),
+        [orig_width, orig_height],
+        capture_duration,
+        INPUT_TYPE,
+    )
+    message = msg.construct_message()
     if TRANSMIT_HTTP:
-        hclient.send_message(msg.construct_message())
+        hclient.send_message(message)
 
     if TRANSMIT_MQTT:
-        mclient.publish(msg.construct_message())
+        mclient.publish(message)
 
     logging.info("TOTAL TIME: {}".format(t3 - t0))
     logging.info("Collecting")

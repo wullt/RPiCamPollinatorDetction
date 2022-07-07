@@ -20,6 +20,8 @@ handler.setFormatter(
 )
 log.addHandler(handler)
 
+DECIMALS_TO_ROUND = 3
+
 
 class Message:
     def __init__(self, ts, node_id):
@@ -31,11 +33,11 @@ class Message:
 
     def add_flower(self, class_name, score, crop):
 
-        flower={
-                "class_name": class_name,
-                "score": float(score),
-                "crop": None,
-            }
+        flower = {
+            "class_name": class_name,
+            "score": round(float(score), DECIMALS_TO_ROUND),
+            "crop": None,
+        }
         if crop is not None:
             bio = BytesIO()
             crop.save(bio, format="JPEG")
@@ -59,17 +61,19 @@ class Message:
             pollinator["crop"] = base64.b64encode(bio.getvalue()).decode("utf-8")
         self.pollinators.append(pollinator)
 
-    def add_metadata(self, flowermeta,  input_image_size, download_time):
+    def add_metadata(self, flowermeta, input_image_size, capture_duration, img_source):
+        self.metadata["node_id"] = self.node_id
+        self.metadata["capture_timestamp"] = str(self.timestamp)
+        self.metadata["original_image"] = {
+            "size": input_image_size,
+            "capture_duration": round(capture_duration, DECIMALS_TO_ROUND),
+            "source": img_source,
+        }
         self.metadata["flower_inference"] = flowermeta
-        self.metadata["flower_inference"]["capture_size"] = input_image_size
-        self.metadata["flower_inference"]["time_download"] = download_time
 
     def construct_message(self):
-        self.metadata["flower_inference"]["node_id"] = self.node_id
-        self.metadata["flower_inference"]["capture_time"] = str(self.timestamp)
         message = {
-            "detections": self.flowers,
-            
+            "detections": {"flowers": self.flowers},
             "metadata": self.metadata,
         }
         return message
