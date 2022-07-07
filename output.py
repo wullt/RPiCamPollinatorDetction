@@ -36,7 +36,7 @@ class Message:
             {
                 "index": index,
                 "class_name": class_name,
-                "score": float(score),
+                "score": round(score, DECIMALS_TO_ROUND),
                 "width": width,
                 "height": height,
             }
@@ -47,7 +47,7 @@ class Message:
             "index": index,
             "flower_index": flower_index,
             "class_name": class_name,
-            "score": float(score),
+            "score": round(score, DECIMALS_TO_ROUND),
         }
         if crop is not None:
             bio = BytesIO()
