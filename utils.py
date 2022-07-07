@@ -18,7 +18,7 @@ def download_image(url, username=None, password=None):
     img = Image.open(BytesIO(response.content))
     return img
 
-RESIZE_RESAMPLE = Image.BILINEAR
+RESIZE_RESAMPLE = Image.BOX
 
 def upload_json(
     crops,
