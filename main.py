@@ -100,6 +100,29 @@ output_config = cfg.get("output")
 IGNORE_EMPTY_RESULTS = output_config.get("ignore_empty_results", False)
 
 
+
+
+# Output configuration (HTTP)
+TRANSMIT_HTTP = False
+hclient = None
+if output_config.get("http") is not None:
+    output_config_http = output_config.get("http")
+    if output_config_http.get("transmit_http", False):
+        TRANSMIT_HTTP = True
+        logging.info("Transmitting to HTTP")
+        http_url = output_config_http.get("url")
+        http_url = http_url.replace("${hostname}", HOSTNAME)
+        http_username = output_config_http.get("username")
+        http_password = output_config_http.get("password")
+        http_method = output_config_http.get("method", "POST")
+        logging.info(
+            "HTTP url: {}, method: {}, username: {}".format(
+                http_url, http_method, http_username
+            )
+        )
+        hclient = HTTPClient(http_url, http_username, http_password, http_method)
+
+
 # Output configuration (MQTT)
 TRANSMIT_MQTT = False
 mclient = None
@@ -124,30 +147,19 @@ if output_config.get("mqtt") is not None:
             mqtt_host, mqtt_port, mqtt_topic, mqtt_username, mqtt_password, mqtt_use_tls
         )
 
-# Output configuration (HTTP)
-TRANSMIT_HTTP = False
-hclient = None
-if output_config.get("http") is not None:
-    output_config_http = output_config.get("http")
-    if output_config_http.get("transmit_http", False):
-        TRANSMIT_HTTP = True
-        logging.info("Transmitting to HTTP")
-        http_url = output_config_http.get("url")
-        http_url = http_url.replace("${hostname}", HOSTNAME)
-        http_username = output_config_http.get("username")
-        http_password = output_config_http.get("password")
-        http_method = output_config_http.get("method", "POST")
-        logging.info(
-            "HTTP url: {}, method: {}, username: {}".format(
-                http_url, http_method, http_username
-            )
-        )
-        hclient = HTTPClient(http_url, http_username, http_password, http_method)
 
-output_config = cfg.get("output")
-OUTPUT_URL = output_config.get("url")
-OUTPUT_USERNAME = output_config.get("username")
-OUTPUT_PASSWORD = output_config.get("password")
+STORE_FILE = False
+BASE_DIR = "output"
+SAVE_CROPS = True
+if output_config.get("file") is not None:
+    output_config_file = output_config.get("file")
+    if output_config_file.get("store_file", False):
+        STORE_FILE = True
+        BASE_DIR = output_config_file.get("base_dir", "output")
+        SAVE_CROPS = output_config_file.get("save_crops", True)
+        logging.info("store_file is enabled, base_dir: {}".format(BASE_DIR))
+
+
 
 CAPTURE_INTERVAL = cfg.get("capture_interval")
 
@@ -246,6 +258,9 @@ while True:
 
     if TRANSMIT_MQTT:
         mclient.publish(message)
+
+    if STORE_FILE:
+        msg.store_file(BASE_DIR)
 
     logging.info("TOTAL TIME: {}".format(t3 - t0))
     logging.info("Collecting")

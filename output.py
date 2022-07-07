@@ -80,6 +80,33 @@ class Message:
         return message
 
 
+    def generate_filename(self, format=".json"):
+        filename = (
+            self.node_id + "_" + self.timestamp.strftime("%Y-%m-%dT%H-%M-%SZ") + format
+        )
+        return filename
+    
+    def _generate_save_path(self):
+        date_dir = self.timestamp.strftime("%Y-%m-%d")
+        time_dir = self.timestamp.strftime("%H")
+        return self.node_id + "/" + date_dir + "/" + time_dir + "/"
+
+    def store_file(self, base_dir):
+        if not os.path.exists(base_dir):
+            os.makedirs(base_dir)
+        if not base_dir.endswith("/"):
+            base_dir += "/"
+        filepath = base_dir + self._generate_save_path()
+        if not os.path.exists(filepath):
+            os.makedirs(filepath)
+            log.info("Created directory: {}".format(filepath))
+        with open(filepath + self.generate_filename(), "w") as f:
+            json.dump(self.construct_message(), f)
+        log.info("Saved message to: {}".format(filepath + self.generate_filename()))
+        return True
+
+
+
 class MQTTClient:
     def __init__(self, host, port, topic, username, password, use_tls):
         self.host = host

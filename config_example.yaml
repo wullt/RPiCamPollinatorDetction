@@ -50,5 +50,8 @@ output:
     topic: "results/${hostname}/json"
     use_tls: true
 
+  file:
+    store_file: false
+    base_dir: /home/pi/results
 
 capture_interval: -1
