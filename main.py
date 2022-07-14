@@ -57,7 +57,7 @@ def log_pollinator_start():
 
 def log_results(num_flowers, num_pollinators):
     logfile = open(logfilename, "a")
-    log_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f") + ",,,," + str(num_flowers) + "," + str(num_pollinators) + "\n"
+    log_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f") + ",,,1," + str(num_flowers) + "," + str(num_pollinators) + "\n"
     logfile.write(log_str)
     logfile.close()
     
