@@ -35,22 +35,31 @@ args = parser.parse_args()
 logfilename = "/home/pi/logs/inference_monitoring_" + datetime.datetime.now().strftime("%Y-%m-%dT%H-%M-%S")+".csv"
 logfile = open(logfilename, "w")
 logfile.write("time,download,flower_start,pollinator_start,num_flowers,num_pollinators\n")
+logfile.close()
 
 def log_start_download():
+    logfile = open(logfilename, "a")
     log_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f") + ",1,,,,\n"
     logfile.write(log_str)
+    logfile.close()
 
 def log_flower_start():
+    logfile = open(logfilename, "a")
     log_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f") + ",1,1,,,\n"
     logfile.write(log_str)
+    logfile.close()
 
 def log_pollinator_start():
+    logfile = open(logfilename, "a")
     log_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f") + ",,1,1,,\n"
     logfile.write(log_str)
+    logfile.close()
 
 def log_results(num_flowers, num_pollinators):
+    logfile = open(logfilename, "a")
     log_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f") + ",,," + str(num_flowers) + "," + str(num_pollinators) + "\n"
     logfile.write(log_str)
+    logfile.close()
     
 
 HOSTNAME = socket.gethostname()
