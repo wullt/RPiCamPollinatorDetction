@@ -32,6 +32,28 @@ parser.add_argument(
 )
 args = parser.parse_args()
 
+logfilename = "/home/pi/logs/inference_monitoring_" + datetime.datetime.now().strftime("%Y-%m-%dT%H-%M-%S")+".csv"
+logfile = open(logfilename, "w")
+logfile.write("time,download,flower_start,pollinator_start,num_flowers,num_pollinators\n")
+
+def log_start_download():
+    log_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f") + ",1,,,,\n"
+    logfile.write(log_str)
+
+def log_flower_start():
+    log_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f") + ",1,1,,,\n"
+    logfile.write(log_str)
+
+def log_pollinator_start():
+    log_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f") + ",,1,1,,\n"
+    logfile.write(log_str)
+
+def log_results(num_flowers, num_pollinators):
+    log_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f") + ",,," + str(num_flowers) + "," + str(num_pollinators) + "\n"
+    logfile.write(log_str)
+    logfile.flush()
+    logfile.close()
+    logfile = open(logfilename, "a")
 
 HOSTNAME = socket.gethostname()
 if "cam-" in HOSTNAME:
@@ -200,8 +222,8 @@ while True:
 
     logging.info("downloading image {}".format(i))
     download_time = datetime.datetime.utcnow()
+    log_start_download()
     t0 = time.time()
-
     image = capture_image()
     t1 = time.time()
     capture_duration = t1 - t0
@@ -210,11 +232,13 @@ while True:
     model_1.reset_inference_times()
     model_2.reset_inference_times()
     msg = Message(download_time, HOSTNAME)
+    log_flower_start()
     crops, result_class_names, result_scores = model_1.get_crops(image)
     t2 = time.time()
     logging.info("processing step 1 image {} took {}".format(i, t2 - t1))
     print("result_class_names", result_class_names)
     nr_flowers = len(result_class_names)
+    log_pollinator_start()
     t2 = time.time()
     pollinator_index = 0
     for i in tqdm(range(nr_flowers)):
@@ -244,6 +268,7 @@ while True:
     logging.info(
         "Average processing time polli {}: {}".format(i, (t3 - t2) / max(len(crops), 1))
     )
+    log_results(num_flowers=nr_flowers, num_pollinators=pollinator_index)
 
     msg.add_metadata(
         model_1.get_metadata(),
