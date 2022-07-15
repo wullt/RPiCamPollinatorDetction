@@ -224,10 +224,10 @@ model_2 = YoloModel(
 )
 
 
-i = 0
+total_number_of_images = 0
 while True:
 
-    logging.info("downloading image {}".format(i))
+    logging.info("downloading image {}".format(total_number_of_images))
     download_time = datetime.datetime.utcnow()
     log_start_download()
     t0 = time.time()
@@ -235,14 +235,14 @@ while True:
     t1 = time.time()
     capture_duration = t1 - t0
     orig_width, orig_height = image.size
-    logging.info("Getting image {} took {}".format(i, capture_duration))
+    logging.info("Getting image {} took {}".format(total_number_of_images, capture_duration))
     model_1.reset_inference_times()
     model_2.reset_inference_times()
     msg = Message(download_time, HOSTNAME)
     log_flower_start()
     crops, result_class_names, result_scores = model_1.get_crops(image)
     t2 = time.time()
-    logging.info("processing step 1 image {} took {}".format(i, t2 - t1))
+    logging.info("processing step 1 image {} took {}".format(total_number_of_images, t2 - t1))
     print("result_class_names", result_class_names)
     nr_flowers = len(result_class_names)
     log_pollinator_start()
@@ -297,6 +297,6 @@ while True:
     logging.info("TOTAL TIME: {}".format(t3 - t0))
     logging.info("Collecting")
     gc.collect()
-    i += 1
+    total_number_of_images += 1
     while time.time() - t0 < (CAPTURE_INTERVAL - 0.1):
         time.sleep(0.05)
