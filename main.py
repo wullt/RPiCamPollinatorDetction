@@ -32,6 +32,29 @@ parser.add_argument(
 )
 args = parser.parse_args()
 
+logfilename = "/home/pi/logs/inference_monitoring_" + datetime.datetime.now().strftime("%Y-%m-%dT%H-%M-%S")+".csv"
+logfile = open(logfilename, "w")
+logfile.write("time,download,flower_start,num_flowers\n")
+logfile.close()
+
+def log_start_download():
+    logfile = open(logfilename, "a")
+    log_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f") + ",1,,\n"
+    logfile.write(log_str)
+    logfile.close()
+
+def log_flower_start():
+    logfile = open(logfilename, "a")
+    log_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f") + ",1,1,\n"
+    logfile.write(log_str)
+    logfile.close()
+
+
+def log_results(num_flowers):
+    logfile = open(logfilename, "a")
+    log_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f") + ",,1," + str(num_flowers) +  "\n"
+    logfile.write(log_str)
+    logfile.close()
 
 HOSTNAME = socket.gethostname()
 if "cam-" in HOSTNAME:
@@ -167,11 +190,13 @@ model_1 = YoloModel(
 )
 
 
-i = 0
+total_number_of_images = 0
 while True:
 
-    logging.info("downloading image {}".format(i))
+    logging.info("downloading image {}".format(total_number_of_images))
     download_time = datetime.datetime.utcnow()
+    log_start_download()
+
     t0 = time.time()
     image = capture_image()
     t1 = time.time()
@@ -180,13 +205,14 @@ while True:
     #image.save("/home/pi/images/{}.jpg".format(time_str))
     capture_duration = t1 - t0
     orig_width, orig_height = image.size
-    logging.info("Getting image {} took {}".format(i, capture_duration))
+    logging.info("Getting image {} took {}".format(total_number_of_images, capture_duration))
     model_1.reset_inference_times()
     msg = Message(download_time, HOSTNAME)
+    log_flower_start()
     t2 = time.time()
     crops, result_class_names, result_scores = model_1.get_crops(image)
     t3 = time.time()
-    logging.info("Flower inference on image {} took {}".format(i, t3 - t2))
+    logging.info("Flower inference on image {} took {}".format(total_number_of_images, t3 - t2))
     logging.info("result_class_names: {}".format(result_class_names))
     nr_flowers = len(result_class_names)
     t4 = time.time()
@@ -212,8 +238,9 @@ while True:
         mclient.publish(message)
 
     logging.info("TOTAL TIME: {}".format(time.time() - t0))
+    log_results(num_flowers=nr_flowers)
     logging.info("Collecting")
     gc.collect()
-    i += 1
+    total_number_of_images += 1
     while time.time() - t0 < (CAPTURE_INTERVAL - 0.1):
         time.sleep(0.05)
