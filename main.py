@@ -1,4 +1,3 @@
-from curses import meta
 import logging
 
 logging.basicConfig(
